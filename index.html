@@ -6,40 +6,217 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Collect the Hearts 💖 — PNG Edition (Lite)</title>
   <style>
-    :root { --bg:#fff7fb; --ink:#222; --accent:#ff4d91; }
-    html, body { height:100%; margin:0 }
-    body { background:var(--bg); font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--ink) }
-    #wrap { position:relative; height:100%; overflow:hidden }
-    canvas { position:absolute; inset:0; display:block; width:100%; height:100% }
-    .hud { position:absolute; top:12px; left:12px; right:12px; display:flex; gap:12px; align-items:center; justify-content:space-between; pointer-events:none; flex-wrap:wrap }
-    .hud .rowWrap { display:flex; gap:12px; align-items:center; pointer-events:auto }
-    .hideOnMobile { display:block }
-    .showOnMobile { display:none }
-    .badge { pointer-events:auto; background:#ffffffdd; backdrop-filter:blur(4px); border:1px solid #0001; padding:8px 12px; border-radius:999px; box-shadow:0 6px 20px #00000014; display:inline-flex; gap:10px; align-items:center }
-    .btn { pointer-events:auto; border:0; background:var(--accent); color:#fff; padding:8px 14px; border-radius:999px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px #ff4d9133 }
-    .overlay { position:absolute; inset:0; display:grid; place-items:center; background:radial-gradient(1200px 600px at 50% -10%, #ffffffcc, #fff7fb 55%, #ffd6e9 100%) }
-    .card { width:min(520px,92vw); background:#fff; border-radius:24px; padding:22px; box-shadow:0 20px 60px #0000001a; border:1px solid #0002 }
-    .card h1 { margin:0 0 8px; font-size:clamp(22px,3.2vw,34px) }
-    .row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:10px }
+    :root {
+      --bg: #fff7fb;
+      --ink: #222;
+      --accent: #ff4d91;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0
+    }
+
+    body {
+      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--ink)
+    }
+
+    #wrap {
+      position: relative;
+      height: 100%;
+      overflow: hidden
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%
+    }
+
+    .hud {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      flex-wrap: wrap
+    }
+
+    .hud .rowWrap {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      pointer-events: auto
+    }
+
+    .hideOnMobile {
+      display: block
+    }
+
+    .showOnMobile {
+      display: none
+    }
+
+    .badge {
+      pointer-events: auto;
+      background: #ffffffdd;
+      backdrop-filter: blur(4px);
+      border: 1px solid #0001;
+      padding: 8px 12px;
+      border-radius: 999px;
+      box-shadow: 0 6px 20px #00000014;
+      display: inline-flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .btn {
+      pointer-events: auto;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px #ff4d9133
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(1200px 600px at 50% -10%, #ffffffcc, #fff7fb 55%, #ffd6e9 100%)
+    }
+
+    .card {
+      width: min(520px, 92vw);
+      background: #fff;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 20px 60px #0000001a;
+      border: 1px solid #0002
+    }
+
+    .card h1 {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 3.2vw, 34px)
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px
+    }
 
     /* Character picker */
-    .charGroup { display:flex; gap:8px; align-items:center }
-    .charBtn { border:1px solid #0002; background:#fff; padding:0; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 10px #00000012 }
-    .charBtn img { width:100%; height:100%; object-fit:cover; border-radius:999px }
-    .charBtn:focus { outline:2px solid #0005; outline-offset:2px }
-    .charBtn.selected { outline:3px solid var(--accent); outline-offset:2px; box-shadow:0 0 0 4px #ff4d9122 }
+    .charGroup {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
 
-    .end { position:absolute; inset:0; display:none; align-items:center; justify-content:center; background: rgba(255,255,255,0.55) }
-    .end .card { text-align:center; width:min(360px, 88vw); padding:16px; border-radius:18px }
-    .thumbHint { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); opacity:.8; background:#000; color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; display:none }
-    @media(hover:none) and (pointer:coarse){ .thumbHint{ display:block } }
+    .charBtn {
+      border: 1px solid #0002;
+      background: #fff;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px #00000012
+    }
+
+    .charBtn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 999px
+    }
+
+    .charBtn:focus {
+      outline: 2px solid #0005;
+      outline-offset: 2px
+    }
+
+    .charBtn.selected {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px #ff4d9122
+    }
+
+    .end {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.55)
+    }
+
+    .end .card {
+      text-align: center;
+      width: min(360px, 88vw);
+      padding: 16px;
+      border-radius: 18px
+    }
+
+    .thumbHint {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: .8;
+      background: #000;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      display: none
+    }
+
+    @media(hover:none) and (pointer:coarse) {
+      .thumbHint {
+        display: block
+      }
+    }
+
     /* Mobile-friendly layout: move character picker to bottom bar */
     @media (max-width: 640px) {
-      .hideOnMobile { display:none }
-      .showOnMobile { display:block }
-      .hud { top:8px; gap:8px }
-      .badge { padding:6px 10px }
-      .btn { padding:6px 12px }
+      .hideOnMobile {
+        display: none
+      }
+
+      .showOnMobile {
+        display: block
+      }
+
+      .hud {
+        top: 8px;
+        gap: 8px
+      }
+
+      .badge {
+        padding: 6px 10px
+      }
+
+      .btn {
+        padding: 6px 12px
+      }
     }
   </style>
 </head>
@@ -55,13 +232,13 @@
         <!-- Clickable heads in main HUD -->
         <div class="charGroup" id="hudChars" aria-label="Choose character">
           <button class="charBtn selected" data-char="bride" title="Choose character">
-            <img src="bride.png" alt=""/>
+            <img src="bride.png" alt="" />
           </button>
           <button class="charBtn" data-char="groom" title="Choose character">
-            <img src="groom.png" alt=""/>
+            <img src="groom.png" alt="" />
           </button>
           <button class="charBtn" data-char="kid" title="Choose character">
-            <img src="kid.png" alt=""/>
+            <img src="kid.png" alt="" />
           </button>
         </div>
         <button class="btn" id="restartBtn" title="Restart (R)">Restart</button>
@@ -76,13 +253,13 @@
           <!-- Clickable heads on start screen -->
           <div class="charGroup" id="startChars" aria-label="Choose character to start">
             <button class="charBtn selected" data-char="bride" title="Bride">
-              <img src="bride.png" alt=""/>
+              <img src="bride.png" alt="" />
             </button>
             <button class="charBtn" data-char="groom" title="Groom">
-              <img src="groom.png" alt=""/>
+              <img src="groom.png" alt="" />
             </button>
             <button class="charBtn" data-char="kid" title="Kid">
-              <img src="kid.png" alt=""/>
+              <img src="kid.png" alt="" />
             </button>
           </div>
         </div>
@@ -108,15 +285,17 @@
     const FRAME_MS = 1000 / TARGET_FPS;
     const MAX_HEARTS = 50;            // cap objects on screen (↑ more hearts)
     const HEART_LIFETIME = 10000;     // ms before a heart despawns
-    const SPAWN_EVERY_MS = 100;       // spawn interval in ms (↓ = more frequent)
+    const SPAWN_EVERY_MS = 500;       // spawn interval in ms (↓ = more frequent)
     const DPR = 1;                    // force 1x to reduce fill rate
+    const SQUASH_INTENSITY = 0.18;   // how bouncy the scaling feels (0.1–0.25 nice)
+    const MAX_SQUASH = 0.28;         // hard cap for stretch amount
 
     // ---------- Canvas ----------
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d', { alpha: true });
 
     let width = 0, height = 0;
-    function resize(){
+    function resize() {
       const rect = canvas.getBoundingClientRect();
       width = Math.floor(rect.width * DPR);
       height = Math.floor(rect.height * DPR);
@@ -139,7 +318,7 @@
     const hudChars = document.getElementById('hudChars');
 
     // ---------- Image loading ----------
-    const images = { bride:new Image(), groom:new Image(), kid:new Image(), heart:new Image() };
+    const images = { bride: new Image(), groom: new Image(), kid: new Image(), heart: new Image() };
     images.bride.src = 'bride.png';
     images.groom.src = 'groom.png';
     images.kid.src = 'kid.png';
@@ -151,17 +330,17 @@
       img.onerror = () => console.warn(`${k}.png not found; using fallback if possible`);
     });
 
-    function imgOrFallback(kind){
+    function imgOrFallback(kind) {
       if (kind === 'heart') return loaded.has('heart') ? images.heart : null;
       return loaded.has(kind) ? images[kind] : null;
     }
 
     // ---------- Character selection helpers ----------
     let currentCharKey = 'bride';
-    function setCharacter(key){
+    function setCharacter(key) {
       currentCharKey = key;
       // Update selected state in both pickers
-      for (const group of [startChars, hudChars]){
+      for (const group of [startChars, hudChars]) {
         if (!group) continue;
         group.querySelectorAll('.charBtn').forEach(btn => {
           btn.classList.toggle('selected', btn.dataset.char === key);
@@ -169,8 +348,8 @@
       }
     }
 
-    function wirePicker(group){
-      group.addEventListener('click', (e)=>{
+    function wirePicker(group) {
+      group.addEventListener('click', (e) => {
         const btn = e.target.closest('.charBtn');
         if (!btn) return;
         const key = btn.dataset.char;
@@ -178,9 +357,9 @@
       });
       // keyboard support
       group.querySelectorAll('.charBtn').forEach(btn => {
-        btn.setAttribute('tabindex','0');
-        btn.addEventListener('keydown', (e)=>{
-          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); btn.click(); }
+        btn.setAttribute('tabindex', '0');
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
         });
       });
     }
@@ -189,31 +368,57 @@
     wirePicker(hudChars);
 
     // ---------- Draw helpers ----------
-    function drawHeart(x, y){
+    function drawHeart(x, y) {
       const hs = imgOrFallback('heart');
-      if (hs){ ctx.drawImage(hs, (x|0)-20, (y|0)-20, 40, 40); }
+      if (hs) { ctx.drawImage(hs, (x | 0) - 20, (y | 0) - 20, 40, 40); }
       else {
-        ctx.save(); ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', x|0, y|0); ctx.restore();
+        ctx.save(); ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', x | 0, y | 0); ctx.restore();
       }
     }
 
-    function currentPlayerImage(){ return imgOrFallback(currentCharKey); }
-    function drawPlayer(x, y){
+    function currentPlayerImage() { return imgOrFallback(currentCharKey); }
+    function drawPlayer(x, y) {
       const img = currentPlayerImage();
-      if (img){ ctx.drawImage(img, (x|0)-24, (y|0)-24, 48, 48); }
-      else {
-        ctx.save(); ctx.fillStyle = '#ffd6e9'; ctx.beginPath(); ctx.arc(x|0, y|0, 24, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#ff4d91'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🙂', x|0, y|0); ctx.restore();
+      // compute stretch based on speed
+      const speedPx = Math.hypot(player.vx, player.vy);
+      const stretch = Math.min(MAX_SQUASH, speedPx * SQUASH_INTENSITY);
+      const sx = 1 - stretch * 0.6;   // thinner sideways
+      const sy = 1 + stretch;         // taller when moving
+      const ang = speedPx > 0.0001 ? Math.atan2(player.vy, player.vx) : 0;
+
+      // soft shadow under the head
+      ctx.save();
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse((x | 0), ((y | 0) + 26), 18 * (1 + stretch * 0.5), 6 * (1 - stretch * 0.3), 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      ctx.translate(x | 0, y | 0);
+      if (ang) ctx.rotate(ang);
+      ctx.scale(sx, sy);
+      if (img) {
+        ctx.drawImage(img, -24, -24, 48, 48);
+      } else {
+        ctx.fillStyle = '#ffd6e9';
+        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff4d91';
+        ctx.font = '14px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🙂', 0, 0);
       }
+      ctx.restore();
     }
+
 
     // ---------- Game state ----------
     const hearts = []; // {x,y,born}
-    const player = { x:200, y:200, tx:200, ty:200, speed:0.35 };
+    const player = { x: 200, y: 200, tx: 200, ty: 200, speed: 0.35, vx: 0, vy: 0 };
     let score = 0;
     let timeLeft = 30; // seconds
     let running = false;
 
-    function setTarget(clientX, clientY){
+    function setTarget(clientX, clientY) {
       const rect = canvas.getBoundingClientRect();
       player.tx = clientX - rect.left;
       player.ty = clientY - rect.top;
@@ -223,24 +428,29 @@
 
     // Spawn logic
     let lastSpawn = 0;
-    function spawnHeart(now){
+    function spawnHeart(now) {
       if (hearts.length >= MAX_HEARTS) return;
       const margin = 24;
-      const x = margin + Math.random() * (canvas.clientWidth - margin*2);
-      const y = margin + Math.random() * (canvas.clientHeight - margin*2);
+      const x = margin + Math.random() * (canvas.clientWidth - margin * 2);
+      const y = margin + Math.random() * (canvas.clientHeight - margin * 2);
       hearts.push({ x, y, born: now });
     }
 
-    function reset(){
+    function reset() {
       score = 0; scoreEl.textContent = '0';
       timeLeft = 30; timerEl.textContent = '30';
       hearts.length = 0; lastSpawn = 0;
+
       const rect = canvas.getBoundingClientRect();
-      player.x = player.tx = rect.width*0.5;
-      player.y = player.ty = rect.height*0.7;
+      // place player at center-ish and clear velocity
+      player.x = player.tx = rect.width * 0.5;
+      player.y = player.ty = rect.height * 0.7;
+      player.vx = 0;
+      player.vy = 0;
     }
 
-    function start(){
+
+    function start() {
       // ensure character is whatever is selected on the start screen
       const startSelected = startChars.querySelector('.charBtn.selected');
       if (startSelected) setCharacter(startSelected.dataset.char);
@@ -253,7 +463,7 @@
       requestAnimationFrame(loop);
     }
 
-    function finish(){
+    function finish() {
       running = false;
       finalScoreEl.textContent = String(score);
       endOverlay.style.display = 'flex';
@@ -263,43 +473,47 @@
     restartBtn.addEventListener('click', start);
     startBtn.addEventListener('click', start);
     againBtn.addEventListener('click', start);
-    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='r') start(); });
+    window.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'r') start(); });
 
     // Main loop (FPS cap)
     let lastTime = performance.now();
     let accTime = 0;
-    function loop(now){
+    function loop(now) {
       if (!running) return;
       const dtMs = now - lastTime; lastTime = now; accTime += dtMs;
       update(dtMs, now);
-      if (accTime >= FRAME_MS){ render(); accTime = 0; }
+      if (accTime >= FRAME_MS) { render(); accTime = 0; }
       requestAnimationFrame(loop);
     }
 
-    function update(dtMs, now){
+    function update(dtMs, now) {
       const dt = Math.min(0.05, dtMs / 1000);
       const lerp = Math.min(1, player.speed * dt * 60);
+
+      const prevX = player.x, prevY = player.y;   // <— add
       player.x += (player.tx - player.x) * lerp;
       player.y += (player.ty - player.y) * lerp;
+      player.vx = player.x - prevX;               // <— add
+      player.vy = player.y - prevY;               // <— add
 
-      if (now - lastSpawn > SPAWN_EVERY_MS){ spawnHeart(now); lastSpawn = now; }
+      if (now - lastSpawn > SPAWN_EVERY_MS) { spawnHeart(now); lastSpawn = now; }
 
-      for (let i = hearts.length - 1; i >= 0; i--){
+      for (let i = hearts.length - 1; i >= 0; i--) {
         const h = hearts[i];
-        if (now - h.born > HEART_LIFETIME){ hearts.splice(i,1); continue; }
+        if (now - h.born > HEART_LIFETIME) { hearts.splice(i, 1); continue; }
         const dx = player.x - h.x, dy = player.y - h.y;
-        if (dx*dx + dy*dy < 24*24){ score++; scoreEl.textContent = String(score); hearts.splice(i,1); }
+        if (dx * dx + dy * dy < 24 * 24) { score++; scoreEl.textContent = String(score); hearts.splice(i, 1); }
       }
 
       timeLeft -= dt;
-      if (timeLeft <= 0){ timerEl.textContent = '0'; finish(); } else {
+      if (timeLeft <= 0) { timerEl.textContent = '0'; finish(); } else {
         timerEl.textContent = String(Math.ceil(timeLeft));
       }
     }
 
-    function render(){
-      ctx.clearRect(0,0,canvas.clientWidth, canvas.clientHeight);
-      for (let i=0;i<hearts.length;i++) drawHeart(hearts[i].x, hearts[i].y);
+    function render() {
+      ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+      for (let i = 0; i < hearts.length; i++) drawHeart(hearts[i].x, hearts[i].y);
       drawPlayer(player.x, player.y);
     }
 
@@ -307,4 +521,5 @@
     setCharacter('bride');
   </script>
 </body>
+
 </html>
