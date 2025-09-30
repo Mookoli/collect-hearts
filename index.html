@@ -4,14 +4,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Collect the Hearts ❤️ — PNG Edition (Lite)</title>
+  <title>Collect the Hearts 💖 — PNG Edition (Lite)</title>
   <style>
     :root { --bg:#fff7fb; --ink:#222; --accent:#ff4d91; }
     html, body { height:100%; margin:0 }
     body { background:var(--bg); font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--ink) }
     #wrap { position:relative; height:100%; overflow:hidden }
     canvas { position:absolute; inset:0; display:block; width:100%; height:100% }
-    .hud { position:absolute; top:12px; left:12px; right:12px; display:flex; gap:12px; align-items:center; justify-content:space-between; pointer-events:none }
+    .hud { position:absolute; top:12px; left:12px; right:12px; display:flex; gap:12px; align-items:center; justify-content:space-between; pointer-events:none; flex-wrap:wrap }
+    .hud .rowWrap { display:flex; gap:12px; align-items:center; pointer-events:auto }
+    .hideOnMobile { display:block }
+    .showOnMobile { display:none }
     .badge { pointer-events:auto; background:#ffffffdd; backdrop-filter:blur(4px); border:1px solid #0001; padding:8px 12px; border-radius:999px; box-shadow:0 6px 20px #00000014; display:inline-flex; gap:10px; align-items:center }
     .btn { pointer-events:auto; border:0; background:var(--accent); color:#fff; padding:8px 14px; border-radius:999px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px #ff4d9133 }
     .overlay { position:absolute; inset:0; display:grid; place-items:center; background:radial-gradient(1200px 600px at 50% -10%, #ffffffcc, #fff7fb 55%, #ffd6e9 100%) }
@@ -26,10 +29,18 @@
     .charBtn:focus { outline:2px solid #0005; outline-offset:2px }
     .charBtn.selected { outline:3px solid var(--accent); outline-offset:2px; box-shadow:0 0 0 4px #ff4d9122 }
 
-    .end { position:absolute; inset:0; display:none; align-items:center; justify-content:center }
-    .end .card { text-align:center }
+    .end { position:absolute; inset:0; display:none; align-items:center; justify-content:center; background: rgba(255,255,255,0.55) }
+    .end .card { text-align:center; width:min(360px, 88vw); padding:16px; border-radius:18px }
     .thumbHint { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); opacity:.8; background:#000; color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; display:none }
     @media(hover:none) and (pointer:coarse){ .thumbHint{ display:block } }
+    /* Mobile-friendly layout: move character picker to bottom bar */
+    @media (max-width: 640px) {
+      .hideOnMobile { display:none }
+      .showOnMobile { display:block }
+      .hud { top:8px; gap:8px }
+      .badge { padding:6px 10px }
+      .btn { padding:6px 12px }
+    }
   </style>
 </head>
 
@@ -38,7 +49,7 @@
     <canvas id="game"></canvas>
 
     <div class="hud">
-      <div class="badge" id="scoreBadge"><strong id="score">0</strong> ❤️</div>
+      <div class="badge" id="scoreBadge"><strong id="score">0</strong> 💖</div>
       <div class="badge"><strong id="timer">30</strong>s</div>
       <div class="badge" style="gap:10px">
         <!-- Clickable heads in main HUD -->
@@ -84,7 +95,7 @@
     <div class="end" id="endOverlay">
       <div class="card">
         <h2>⏰</h2>
-        <p><strong><span id="finalScore">0</span></strong> ❤️</p>
+        <p><strong><span id="finalScore">0</span></strong>! ❤️</p>
         <div class="row" style="justify-content:center">
           <button id="againBtn" class="btn">Nomal!</button>
         </div>
@@ -97,7 +108,7 @@
     const FRAME_MS = 1000 / TARGET_FPS;
     const MAX_HEARTS = 50;            // cap objects on screen (↑ more hearts)
     const HEART_LIFETIME = 10000;     // ms before a heart despawns
-    const SPAWN_EVERY_MS = 200;       // spawn interval in ms (↓ = more frequent)
+    const SPAWN_EVERY_MS = 100;       // spawn interval in ms (↓ = more frequent)
     const DPR = 1;                    // force 1x to reduce fill rate
 
     // ---------- Canvas ----------
