@@ -178,22 +178,13 @@
 
     <div class="overlay" id="startOverlay">
       <div class="card">
-        <h1>Collect the Hearts 💖 — PNG Edition (Lite)</h1>
-        <p>Move your mouse (or finger) to collect hearts. Uses PNG heads for the character and (optionally) for hearts.
-        </p>
-        <ul>
-          <li>Optimized for low-power laptops (30 FPS cap, capped object count)</li>
-          <li>Drop your images beside <code>index.html</code>: <code>bride.png</code>, <code>groom.png</code>,
-            <code>guest.png</code> (optional), <code>heart.png</code> (optional)
-          </li>
+        <h1>Herzli sammle</h1>
         </ul>
         <div class="row">
           <label>Choose a character:</label>
           <select id="startChar" class="select">
-            <!-- Same here: labels are names; values map to PNG filenames -->
             <option value="bride" selected>Anna</option>
             <option value="groom">Luca</option>
-            <option value="guest">Guest</option>
           </select>
           <img id="startCharPreview" class="imgPreview" alt="preview" src="bride.png" />
         </div>
@@ -205,19 +196,16 @@
 
     <div class="end" id="endOverlay">
       <div class="card">
-        <h2>Time! ⏰</h2>
-        <p>You collected <strong><span id="finalScore">0</span> hearts</strong>! 💖</p>
+        <h2>⏰</h2>
+        <p><strong><span id="finalScore">0</span></strong>! ❤️</p>
         <div class="row" style="justify-content:center">
-          <button id="againBtn" class="btn">Play Again</button>
+          <button id="againBtn" class="btn">Nomal!</button>
         </div>
       </div>
     </div>
-
-    <div class="thumbHint">Tip: drag your finger to move</div>
   </div>
 
   <script>
-    // ---------- Config (performance-first) ----------
     const TARGET_FPS = 30;            // cap FPS
     const FRAME_MS = 1000 / TARGET_FPS;
     const MAX_HEARTS = 50;            // cap objects on screen (↑ more hearts)
