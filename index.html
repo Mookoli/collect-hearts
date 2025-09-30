@@ -49,6 +49,9 @@
           <button class="charBtn" data-char="groom" title="Choose character">
             <img src="groom.png" alt=""/>
           </button>
+          <button class="charBtn" data-char="kid" title="Choose character">
+            <img src="kid.png" alt=""/>
+          </button>
         </div>
         <button class="btn" id="restartBtn" title="Restart (R)">Restart</button>
       </div>
@@ -57,7 +60,7 @@
     <div class="overlay" id="startOverlay">
       <div class="card">
         <h1>Herzli sammle</h1>
-        <p style="margin:6px 0 0; opacity:.8">Choose your fighter!</p>
+        <p style="margin:6px 0 0; opacity:.8"></p>
         <div class="row" style="margin-top:16px">
           <!-- Clickable heads on start screen -->
           <div class="charGroup" id="startChars" aria-label="Choose character to start">
@@ -66,6 +69,9 @@
             </button>
             <button class="charBtn" data-char="groom" title="Groom">
               <img src="groom.png" alt=""/>
+            </button>
+            <button class="charBtn" data-char="kid" title="Kid">
+              <img src="kid.png" alt=""/>
             </button>
           </div>
         </div>
@@ -91,7 +97,7 @@
     const FRAME_MS = 1000 / TARGET_FPS;
     const MAX_HEARTS = 50;            // cap objects on screen (↑ more hearts)
     const HEART_LIFETIME = 10000;     // ms before a heart despawns
-    const SPAWN_EVERY_MS = 100;       // spawn interval in ms (↓ = more frequent)
+    const SPAWN_EVERY_MS = 200;       // spawn interval in ms (↓ = more frequent)
     const DPR = 1;                    // force 1x to reduce fill rate
 
     // ---------- Canvas ----------
@@ -122,9 +128,10 @@
     const hudChars = document.getElementById('hudChars');
 
     // ---------- Image loading ----------
-    const images = { bride:new Image(), groom:new Image(), heart:new Image() };
+    const images = { bride:new Image(), groom:new Image(), kid:new Image(), heart:new Image() };
     images.bride.src = 'bride.png';
     images.groom.src = 'groom.png';
+    images.kid.src = 'kid.png';
     images.heart.src = 'heart.png'; // optional; falls back to emoji if missing
 
     const loaded = new Set();
