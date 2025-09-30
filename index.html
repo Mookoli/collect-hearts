@@ -4,155 +4,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Collect the Hearts 💖 — PNG Edition (Lite)</title>
+  <title>Collect the Hearts ❤️ — PNG Edition (Lite)</title>
   <style>
-    :root {
-      --bg: #fff7fb;
-      --ink: #222;
-      --accent: #ff4d91;
-    }
+    :root { --bg:#fff7fb; --ink:#222; --accent:#ff4d91; }
+    html, body { height:100%; margin:0 }
+    body { background:var(--bg); font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--ink) }
+    #wrap { position:relative; height:100%; overflow:hidden }
+    canvas { position:absolute; inset:0; display:block; width:100%; height:100% }
+    .hud { position:absolute; top:12px; left:12px; right:12px; display:flex; gap:12px; align-items:center; justify-content:space-between; pointer-events:none }
+    .badge { pointer-events:auto; background:#ffffffdd; backdrop-filter:blur(4px); border:1px solid #0001; padding:8px 12px; border-radius:999px; box-shadow:0 6px 20px #00000014; display:inline-flex; gap:10px; align-items:center }
+    .btn { pointer-events:auto; border:0; background:var(--accent); color:#fff; padding:8px 14px; border-radius:999px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px #ff4d9133 }
+    .overlay { position:absolute; inset:0; display:grid; place-items:center; background:radial-gradient(1200px 600px at 50% -10%, #ffffffcc, #fff7fb 55%, #ffd6e9 100%) }
+    .card { width:min(520px,92vw); background:#fff; border-radius:24px; padding:22px; box-shadow:0 20px 60px #0000001a; border:1px solid #0002 }
+    .card h1 { margin:0 0 8px; font-size:clamp(22px,3.2vw,34px) }
+    .row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:10px }
 
-    html,
-    body {
-      height: 100%;
-      margin: 0
-    }
+    /* Character picker */
+    .charGroup { display:flex; gap:8px; align-items:center }
+    .charBtn { border:1px solid #0002; background:#fff; padding:0; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 10px #00000012 }
+    .charBtn img { width:100%; height:100%; object-fit:cover; border-radius:999px }
+    .charBtn:focus { outline:2px solid #0005; outline-offset:2px }
+    .charBtn.selected { outline:3px solid var(--accent); outline-offset:2px; box-shadow:0 0 0 4px #ff4d9122 }
 
-    body {
-      background: var(--bg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color: var(--ink)
-    }
-
-    #wrap {
-      position: relative;
-      height: 100%;
-      overflow: hidden
-    }
-
-    canvas {
-      position: absolute;
-      inset: 0;
-      display: block;
-      width: 100%;
-      height: 100%
-    }
-
-    .hud {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      pointer-events: none
-    }
-
-    .badge {
-      pointer-events: auto;
-      background: #ffffffdd;
-      backdrop-filter: blur(4px);
-      border: 1px solid #0001;
-      padding: 8px 12px;
-      border-radius: 999px;
-      box-shadow: 0 6px 20px #00000014;
-      display: inline-flex;
-      gap: 10px;
-      align-items: center
-    }
-
-    .btn {
-      pointer-events: auto;
-      border: 0;
-      background: var(--accent);
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 8px 24px #ff4d9133
-    }
-
-    .select {
-      pointer-events: auto;
-      padding: 6px 10px;
-      border-radius: 12px;
-      border: 1px solid #0002;
-      background: #fff
-    }
-
-    .overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(1200px 600px at 50% -10%, #ffffffcc, #fff7fb 55%, #ffd6e9 100%)
-    }
-
-    .card {
-      width: min(520px, 92vw);
-      background: #fff;
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 20px 60px #0000001a;
-      border: 1px solid #0002
-    }
-
-    .card h1 {
-      margin: 0 0 8px;
-      font-size: clamp(22px, 3.2vw, 34px)
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px
-    }
-
-    .imgPreview {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      object-fit: cover;
-      box-shadow: 0 6px 12px #0000001a;
-      border: 1px solid #0002
-    }
-
-    .end {
-      position: absolute;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center
-    }
-
-    .end .card {
-      text-align: center
-    }
-
-    .thumbHint {
-      position: absolute;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: .8;
-      background: #000;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      display: none
-    }
-
-    @media(hover:none) and (pointer:coarse) {
-      .thumbHint {
-        display: block
-      }
-    }
+    .end { position:absolute; inset:0; display:none; align-items:center; justify-content:center }
+    .end .card { text-align:center }
+    .thumbHint { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); opacity:.8; background:#000; color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; display:none }
+    @media(hover:none) and (pointer:coarse){ .thumbHint{ display:block } }
   </style>
 </head>
 
@@ -161,17 +38,18 @@
     <canvas id="game"></canvas>
 
     <div class="hud">
-      <div class="badge" id="scoreBadge">Score: <strong id="score">0</strong> 💖</div>
-      <div class="badge">Time: <strong id="timer">45</strong>s</div>
-      <div class="badge" style="gap:8px">
-        <span>Character:</span>
-        <select id="char" class="select" aria-label="Choose character">
-          <!-- Change the label text to show their names; keep value to match the PNG filename -->
-          <option value="bride" selected>Anna</option>
-          <option value="groom">Luca</option>
-          <option value="guest">Guest</option>
-        </select>
-        <img id="charPreview" class="imgPreview" alt="preview" src="bride.png" />
+      <div class="badge" id="scoreBadge">Score: <strong id="score">0</strong> ❤️</div>
+      <div class="badge">Time: <strong id="timer">30</strong>s</div>
+      <div class="badge" style="gap:10px">
+        <!-- Clickable heads in main HUD -->
+        <div class="charGroup" id="hudChars" aria-label="Choose character">
+          <button class="charBtn selected" data-char="bride" title="Choose character">
+            <img src="bride.png" alt=""/>
+          </button>
+          <button class="charBtn" data-char="groom" title="Choose character">
+            <img src="groom.png" alt=""/>
+          </button>
+        </div>
         <button class="btn" id="restartBtn" title="Restart (R)">Restart</button>
       </div>
     </div>
@@ -179,14 +57,17 @@
     <div class="overlay" id="startOverlay">
       <div class="card">
         <h1>Herzli sammle</h1>
-        </ul>
-        <div class="row">
-          <label>Choose a character:</label>
-          <select id="startChar" class="select">
-            <option value="bride" selected>Anna</option>
-            <option value="groom">Luca</option>
-          </select>
-          <img id="startCharPreview" class="imgPreview" alt="preview" src="bride.png" />
+        <p style="margin:6px 0 0; opacity:.8">Choose your fighter!</p>
+        <div class="row" style="margin-top:16px">
+          <!-- Clickable heads on start screen -->
+          <div class="charGroup" id="startChars" aria-label="Choose character to start">
+            <button class="charBtn selected" data-char="bride" title="Bride">
+              <img src="bride.png" alt=""/>
+            </button>
+            <button class="charBtn" data-char="groom" title="Groom">
+              <img src="groom.png" alt=""/>
+            </button>
+          </div>
         </div>
         <div class="row">
           <button id="startBtn" class="btn">Start</button>
@@ -197,7 +78,7 @@
     <div class="end" id="endOverlay">
       <div class="card">
         <h2>⏰</h2>
-        <p><strong><span id="finalScore">0</span></strong>! ❤️</p>
+        <p><strong><span id="finalScore">0</span></strong> ❤️</p>
         <div class="row" style="justify-content:center">
           <button id="againBtn" class="btn">Nomal!</button>
         </div>
@@ -209,7 +90,7 @@
     const TARGET_FPS = 30;            // cap FPS
     const FRAME_MS = 1000 / TARGET_FPS;
     const MAX_HEARTS = 50;            // cap objects on screen (↑ more hearts)
-    const HEART_LIFETIME = 10000;      // ms before a heart despawns
+    const HEART_LIFETIME = 10000;     // ms before a heart despawns
     const SPAWN_EVERY_MS = 100;       // spawn interval in ms (↓ = more frequent)
     const DPR = 1;                    // force 1x to reduce fill rate
 
@@ -218,7 +99,7 @@
     const ctx = canvas.getContext('2d', { alpha: true });
 
     let width = 0, height = 0;
-    function resize() {
+    function resize(){
       const rect = canvas.getBoundingClientRect();
       width = Math.floor(rect.width * DPR);
       height = Math.floor(rect.height * DPR);
@@ -237,86 +118,84 @@
     const startBtn = document.getElementById('startBtn');
     const againBtn = document.getElementById('againBtn');
     const restartBtn = document.getElementById('restartBtn');
-    const charSelect = document.getElementById('char');
-    const charPreview = document.getElementById('charPreview');
-    const startCharSelect = document.getElementById('startChar');
-    const startCharPreview = document.getElementById('startCharPreview');
+    const startChars = document.getElementById('startChars');
+    const hudChars = document.getElementById('hudChars');
 
     // ---------- Image loading ----------
-    const images = {
-      bride: new Image(),
-      groom: new Image(),
-      guest: new Image(),
-      heart: new Image(),
-    };
+    const images = { bride:new Image(), groom:new Image(), heart:new Image() };
     images.bride.src = 'bride.png';
     images.groom.src = 'groom.png';
-    images.guest.src = 'guest.png'; // optional; if missing, fallback to bride
-    images.heart.src = 'heart.png'; // optional; if missing, fallback to emoji
+    images.heart.src = 'heart.png'; // optional; falls back to emoji if missing
 
-    // Track load state (but we allow starting even if not all loaded yet)
     const loaded = new Set();
     Object.entries(images).forEach(([k, img]) => {
       img.onload = () => loaded.add(k);
-      img.onerror = () => console.warn(`${k}.png not found; using fallback where applicable`);
+      img.onerror = () => console.warn(`${k}.png not found; using fallback if possible`);
     });
 
-    function imgOrFallback(kind) {
-      // returns an Image or null for emoji fallback
+    function imgOrFallback(kind){
       if (kind === 'heart') return loaded.has('heart') ? images.heart : null;
-      if (loaded.has(kind)) return images[kind];
-      // fallbacks: guest -> bride, groom/bride -> if not loaded, null (will draw placeholder)
-      if (kind === 'guest' && loaded.has('bride')) return images.bride;
-      return null;
+      return loaded.has(kind) ? images[kind] : null;
     }
 
-    // ---------- Draw helpers ----------
-    function drawHeart(x, y) {
-      const hs = imgOrFallback('heart');
-      if (hs) {
-        ctx.drawImage(hs, (x | 0) - 20, (y | 0) - 20, 40, 40);
-      } else {
-        // emoji fallback if no heart.png
-        ctx.save();
-        ctx.font = '32px serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('❤️', x | 0, y | 0);
-        ctx.restore();
+    // ---------- Character selection helpers ----------
+    let currentCharKey = 'bride';
+    function setCharacter(key){
+      currentCharKey = key;
+      // Update selected state in both pickers
+      for (const group of [startChars, hudChars]){
+        if (!group) continue;
+        group.querySelectorAll('.charBtn').forEach(btn => {
+          btn.classList.toggle('selected', btn.dataset.char === key);
+        });
       }
     }
 
-    let currentCharKey = 'bride';
-    function currentPlayerImage() { return imgOrFallback(currentCharKey); }
+    function wirePicker(group){
+      group.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.charBtn');
+        if (!btn) return;
+        const key = btn.dataset.char;
+        setCharacter(key);
+      });
+      // keyboard support
+      group.querySelectorAll('.charBtn').forEach(btn => {
+        btn.setAttribute('tabindex','0');
+        btn.addEventListener('keydown', (e)=>{
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); btn.click(); }
+        });
+      });
+    }
 
-    function drawPlayer(x, y) {
+    wirePicker(startChars);
+    wirePicker(hudChars);
+
+    // ---------- Draw helpers ----------
+    function drawHeart(x, y){
+      const hs = imgOrFallback('heart');
+      if (hs){ ctx.drawImage(hs, (x|0)-20, (y|0)-20, 40, 40); }
+      else {
+        ctx.save(); ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', x|0, y|0); ctx.restore();
+      }
+    }
+
+    function currentPlayerImage(){ return imgOrFallback(currentCharKey); }
+    function drawPlayer(x, y){
       const img = currentPlayerImage();
-      if (img) {
-        ctx.drawImage(img, (x | 0) - 24, (y | 0) - 24, 48, 48);
-      } else {
-        // simple placeholder when image not ready
-        ctx.save();
-        ctx.fillStyle = '#ffd6e9';
-        ctx.beginPath();
-        ctx.arc(x | 0, y | 0, 24, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ff4d91';
-        ctx.font = '14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🙂', x | 0, y | 0);
-        ctx.restore();
+      if (img){ ctx.drawImage(img, (x|0)-24, (y|0)-24, 48, 48); }
+      else {
+        ctx.save(); ctx.fillStyle = '#ffd6e9'; ctx.beginPath(); ctx.arc(x|0, y|0, 24, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#ff4d91'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🙂', x|0, y|0); ctx.restore();
       }
     }
 
     // ---------- Game state ----------
     const hearts = []; // {x,y,born}
-    const player = { x: 200, y: 200, tx: 200, ty: 200, speed: 0.35 };
+    const player = { x:200, y:200, tx:200, ty:200, speed:0.35 };
     let score = 0;
     let timeLeft = 30; // seconds
     let running = false;
 
-    function setTarget(clientX, clientY) {
+    function setTarget(clientX, clientY){
       const rect = canvas.getBoundingClientRect();
       player.tx = clientX - rect.left;
       player.ty = clientY - rect.top;
@@ -326,30 +205,27 @@
 
     // Spawn logic
     let lastSpawn = 0;
-    function spawnHeart(now) {
+    function spawnHeart(now){
       if (hearts.length >= MAX_HEARTS) return;
       const margin = 24;
-      const x = margin + Math.random() * (canvas.clientWidth - margin * 2);
-      const y = margin + Math.random() * (canvas.clientHeight - margin * 2);
+      const x = margin + Math.random() * (canvas.clientWidth - margin*2);
+      const y = margin + Math.random() * (canvas.clientHeight - margin*2);
       hearts.push({ x, y, born: now });
     }
 
-    function reset() {
-      // sync character from start screen
-      currentCharKey = startCharSelect.value || 'bride';
-      // update UI mirrors
-      charSelect.value = currentCharKey;
-      charPreview.src = `${currentCharKey}.png`;
-
+    function reset(){
       score = 0; scoreEl.textContent = '0';
       timeLeft = 30; timerEl.textContent = '30';
       hearts.length = 0; lastSpawn = 0;
       const rect = canvas.getBoundingClientRect();
-      player.x = player.tx = rect.width * 0.5;
-      player.y = player.ty = rect.height * 0.7;
+      player.x = player.tx = rect.width*0.5;
+      player.y = player.ty = rect.height*0.7;
     }
 
-    function start() {
+    function start(){
+      // ensure character is whatever is selected on the start screen
+      const startSelected = startChars.querySelector('.charBtn.selected');
+      if (startSelected) setCharacter(startSelected.dataset.char);
       reset();
       startOverlay.style.display = 'none';
       endOverlay.style.display = 'none';
@@ -359,7 +235,7 @@
       requestAnimationFrame(loop);
     }
 
-    function finish() {
+    function finish(){
       running = false;
       finalScoreEl.textContent = String(score);
       endOverlay.style.display = 'flex';
@@ -369,68 +245,48 @@
     restartBtn.addEventListener('click', start);
     startBtn.addEventListener('click', start);
     againBtn.addEventListener('click', start);
-
-    startCharSelect.addEventListener('change', () => {
-      startCharPreview.src = `${startCharSelect.value}.png`;
-    });
-    charSelect.addEventListener('change', () => {
-      currentCharKey = charSelect.value;
-      charPreview.src = `${currentCharKey}.png`;
-    });
-
-    window.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'r') start(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='r') start(); });
 
     // Main loop (FPS cap)
     let lastTime = performance.now();
     let accTime = 0;
-
-    function loop(now) {
+    function loop(now){
       if (!running) return;
       const dtMs = now - lastTime; lastTime = now; accTime += dtMs;
       update(dtMs, now);
-      if (accTime >= FRAME_MS) { render(); accTime = 0; }
+      if (accTime >= FRAME_MS){ render(); accTime = 0; }
       requestAnimationFrame(loop);
     }
 
-    function update(dtMs, now) {
+    function update(dtMs, now){
       const dt = Math.min(0.05, dtMs / 1000);
       const lerp = Math.min(1, player.speed * dt * 60);
-      const prevX = player.x, prevY = player.y;
       player.x += (player.tx - player.x) * lerp;
       player.y += (player.ty - player.y) * lerp;
 
-      if (now - lastSpawn > SPAWN_EVERY_MS) { spawnHeart(now); lastSpawn = now; }
+      if (now - lastSpawn > SPAWN_EVERY_MS){ spawnHeart(now); lastSpawn = now; }
 
-      for (let i = hearts.length - 1; i >= 0; i--) {
+      for (let i = hearts.length - 1; i >= 0; i--){
         const h = hearts[i];
-        if (now - h.born > HEART_LIFETIME) { hearts.splice(i, 1); continue; }
+        if (now - h.born > HEART_LIFETIME){ hearts.splice(i,1); continue; }
         const dx = player.x - h.x, dy = player.y - h.y;
-        if (dx * dx + dy * dy < 24 * 24) {
-          score++; scoreEl.textContent = String(score);
-          hearts.splice(i, 1);
-        }
+        if (dx*dx + dy*dy < 24*24){ score++; scoreEl.textContent = String(score); hearts.splice(i,1); }
       }
 
       timeLeft -= dt;
-      if (timeLeft <= 0) { timerEl.textContent = '0'; finish(); } else {
+      if (timeLeft <= 0){ timerEl.textContent = '0'; finish(); } else {
         timerEl.textContent = String(Math.ceil(timeLeft));
       }
     }
 
-    function render() {
-      ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-      // hearts
-      for (let i = 0; i < hearts.length; i++) drawHeart(hearts[i].x, hearts[i].y);
-      // player
+    function render(){
+      ctx.clearRect(0,0,canvas.clientWidth, canvas.clientHeight);
+      for (let i=0;i<hearts.length;i++) drawHeart(hearts[i].x, hearts[i].y);
       drawPlayer(player.x, player.y);
     }
 
-    // Initialize previews
-    (function init() {
-      startCharPreview.src = `${startCharSelect.value}.png`;
-      charPreview.src = `${charSelect.value}.png`;
-    })();
+    // Initialize selection state
+    setCharacter('bride');
   </script>
 </body>
-
 </html>
