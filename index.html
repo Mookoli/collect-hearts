@@ -218,8 +218,64 @@
         padding: 6px 12px
       }
     }
-    @keyframes oneTurn { to { transform: rotate(1turn); } }
-    .charBtn.spin img { animation: oneTurn 500ms linear; }
+
+    @keyframes oneTurn {
+      to {
+        transform: rotate(1turn);
+      }
+    }
+
+    .charBtn img.spin {
+      animation: oneTurn 500ms linear;
+    }
+
+    .endChar {
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      object-fit: cover;
+      box-shadow: 0 6px 12px #0000001a;
+      border: 1px solid #0002;
+      margin: 6px auto 10px;
+      display: block;
+      opacity: 0;
+      transition: opacity .3s ease;
+    }
+
+    .end .revealLater {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    .end.showDetails .revealLater {
+      opacity: 1;
+      transform: none;
+    }
+
+    .endChar {
+      transform-origin: 50% 85%;
+    }
+
+/* exaggerated triple bounce with spin */
+.endChar { transform-origin: 50% 85%; }
+
+@keyframes tripleBounce {
+  0%   { transform: scale(0.7, 1.3); }   /* crouch */
+  10%  { transform: scale(1.3, 0.8); }   /* first pop */
+  25%  { transform: scale(0.85, 1.15); } /* rebound */
+  40%  { transform: scale(1.2, 0.85); }  /* second pop */
+  55%  { transform: scale(0.9, 1.1); }   /* rebound */
+  70%  { transform: scale(1.1, 0.9); }   /* third pop */
+  85%  { transform: scale(0.96, 1.04); } /* settle */
+  100% { transform: scale(1, 1); }       /* rest */
+}
+
+.end.showDetails .endChar {
+  animation: tripleBounce 1.2s cubic-bezier(.25, .8, .25, 1);
+  opacity:1;
+}
+
   </style>
 </head>
 
@@ -243,7 +299,7 @@
             <img src="kid.png" alt="" />
           </button>
         </div>
-        <button class="btn" id="restartBtn" title="Restart (R)">Restart</button>ƒ
+        <button class="btn" id="restartBtn" title="Restart (R)">Nomal!</button>
       </div>
     </div>
 
@@ -270,12 +326,11 @@
         </div>
       </div>
     </div>
-
     <div class="end" id="endOverlay">
       <div class="card">
-        <h2>⏰</h2>
-        <p><strong><span id="finalScore">0</span></strong>! ❤️</p>
-        <div class="row" style="justify-content:center">
+        <img id="endChar" class="endChar" alt="" />
+        <p class="revealLater"><strong><span id="finalScore">0</span></strong> ❤️</p>
+        <div class="row revealLater" style="justify-content:center">
           <button id="againBtn" class="btn">Nomal!</button>
         </div>
       </div>
@@ -286,9 +341,9 @@
   <script>
     const TARGET_FPS = 30;            // cap FPS
     const FRAME_MS = 1000 / TARGET_FPS;
-    const MAX_HEARTS = 50;            // cap objects on screen (↑ more hearts)
-    const HEART_LIFETIME = 10000;     // ms before a heart despawns
-    const SPAWN_EVERY_MS = 500;       // spawn interval in ms (↓ = more frequent)
+    const MAX_HEARTS = 100;            // cap objects on screen (↑ more hearts)
+    const HEART_LIFETIME = 40000;     // ms before a heart despawns
+    const SPAWN_EVERY_MS = 400;       // spawn interval in ms (↓ = more frequent)
     const DPR = 1;                    // force 1x to reduce fill rate
     const SQUASH_INTENSITY = 0.18;   // how bouncy the scaling feels (0.1–0.25 nice)
     const MAX_SQUASH = 0.28;         // hard cap for stretch amount
@@ -339,29 +394,29 @@
     }
 
     // ---------- Character selection helpers ----------
-      let currentCharKey = 'bride';
-      function setCharacter(key) {
-        currentCharKey = key;
-        // Update selected state in both pickers
-        for (const group of [startChars, hudChars]) {
-          if (!group) continue;
-          group.querySelectorAll('.charBtn').forEach(btn => {
-            btn.classList.toggle('selected', btn.dataset.char === key);
-          });
-          const chosen = group.querySelector(`.charBtn[data-char="${key}"] img`);
-          if (chosen) {
-            // restart animation even if class was there before
+    let currentCharKey = 'bride';
+    function setCharacter(key) {
+      currentCharKey = key;
+      // Update selected state in both pickers
+      for (const group of [startChars, hudChars]) {
+        if (!group) continue;
+        group.querySelectorAll('.charBtn').forEach(btn => {
+          btn.classList.toggle('selected', btn.dataset.char === key);
+        });
+        const chosen = group.querySelector(`.charBtn[data-char="${key}"] img`);
+        if (chosen) {
+          // restart animation even if class was there before
+          chosen.classList.remove('spin');
+          // force reflow to restart CSS animation
+          void chosen.offsetWidth;
+          chosen.classList.add('spin');
+          chosen.addEventListener('animationend', () => {
             chosen.classList.remove('spin');
-            // force reflow to restart CSS animation
-            void chosen.offsetWidth;
-            chosen.classList.add('spin');
-            chosen.addEventListener('animationend', () => {
-              chosen.classList.remove('spin');
-            }, { once: true });
-          }
+          }, { once: true });
         }
       }
-    
+    }
+
     function wirePicker(group) {
       group.addEventListener('click', (e) => {
         const btn = e.target.closest('.charBtn');
@@ -429,7 +484,7 @@
     const hearts = []; // {x,y,born}
     const player = { x: 200, y: 200, tx: 200, ty: 200, speed: 0.35, vx: 0, vy: 0 };
     let score = 0;
-    let timeLeft = 30; // seconds
+    let timeLeft = 5; // seconds
     let running = false;
 
     function setTarget(clientX, clientY) {
@@ -452,7 +507,7 @@
 
     function reset() {
       score = 0; scoreEl.textContent = '0';
-      timeLeft = 30; timerEl.textContent = '30';
+      timeLeft = 5; timerEl.textContent = '5';
       hearts.length = 0; lastSpawn = 0;
 
       const rect = canvas.getBoundingClientRect();
@@ -480,8 +535,12 @@
     function finish() {
       running = false;
       finalScoreEl.textContent = String(score);
+      const endCharEl = document.getElementById('endChar');
+      if (endCharEl) endCharEl.src = `${currentCharKey}.png`;
       endOverlay.style.display = 'flex';
+      endOverlay.classList.add('showDetails'); // instantly show all details and trigger bounce
     }
+
 
     // UI wiring
     restartBtn.addEventListener('click', start);
