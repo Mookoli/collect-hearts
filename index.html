@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Collect the Hearts 💖 — PNG Edition (Lite)</title>
+  <title>Herzli sammle</title>
   <style>
     :root {
       --bg: #fff7fb;
@@ -218,6 +218,8 @@
         padding: 6px 12px
       }
     }
+    @keyframes oneTurn { to { transform: rotate(1turn); } }
+    .charBtn.spin img { animation: oneTurn 500ms linear; }
   </style>
 </head>
 
@@ -241,13 +243,13 @@
             <img src="kid.png" alt="" />
           </button>
         </div>
-        <button class="btn" id="restartBtn" title="Restart (R)">Restart</button>
+        <button class="btn" id="restartBtn" title="Restart (R)">Restart</button>ƒ
       </div>
     </div>
 
     <div class="overlay" id="startOverlay">
       <div class="card">
-        <h1>Herzli sammle</h1>
+        <h1></h1>
         <p style="margin:6px 0 0; opacity:.8"></p>
         <div class="row" style="margin-top:16px">
           <!-- Clickable heads on start screen -->
@@ -279,7 +281,7 @@
       </div>
     </div>
   </div>
-  
+
 
   <script>
     const TARGET_FPS = 30;            // cap FPS
@@ -337,18 +339,29 @@
     }
 
     // ---------- Character selection helpers ----------
-    let currentCharKey = 'bride';
-    function setCharacter(key) {
-      currentCharKey = key;
-      // Update selected state in both pickers
-      for (const group of [startChars, hudChars]) {
-        if (!group) continue;
-        group.querySelectorAll('.charBtn').forEach(btn => {
-          btn.classList.toggle('selected', btn.dataset.char === key);
-        });
+      let currentCharKey = 'bride';
+      function setCharacter(key) {
+        currentCharKey = key;
+        // Update selected state in both pickers
+        for (const group of [startChars, hudChars]) {
+          if (!group) continue;
+          group.querySelectorAll('.charBtn').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.char === key);
+          });
+          const chosen = group.querySelector(`.charBtn[data-char="${key}"] img`);
+          if (chosen) {
+            // restart animation even if class was there before
+            chosen.classList.remove('spin');
+            // force reflow to restart CSS animation
+            void chosen.offsetWidth;
+            chosen.classList.add('spin');
+            chosen.addEventListener('animationend', () => {
+              chosen.classList.remove('spin');
+            }, { once: true });
+          }
+        }
       }
-    }
-
+    
     function wirePicker(group) {
       group.addEventListener('click', (e) => {
         const btn = e.target.closest('.charBtn');
