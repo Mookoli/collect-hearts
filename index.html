@@ -244,14 +244,17 @@
     .endChar {
       width: 72px;
       height: 72px;
-      border-radius: 999px;
-      object-fit: cover;
-      box-shadow: 0 6px 12px #0000001a;
-      border: 1px solid #0002;
+      border: none;
       margin: 6px auto 10px;
       display: block;
       opacity: 0;
       transition: opacity .3s ease;
+      border-radius: 0;
+      object-fit: contain;
+      border: none;
+      background-color: transparent;
+      mix-blend-mode: multiply;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
     }
 
     .end .revealLater {
@@ -321,6 +324,17 @@
       animation: tripleBounce 1.2s cubic-bezier(.25, .8, .25, 1);
       opacity: 1;
     }
+
+    #startBtn {
+      margin-top: 20px;
+      /* more space below heads */
+      min-width: 90px;
+      /* slightly wider */
+      border-radius: 999px;
+      padding: 10px 24px;
+      font-size: 16px;
+      box-shadow: 0 8px 20px #ff4d9133;
+    }
   </style>
 </head>
 
@@ -374,7 +388,7 @@
     <div class="end" id="endOverlay">
       <div class="card">
         <img id="endChar" class="endChar" alt="" />
-        <p class="revealLater"><strong><span id="finalScore">0</span></strong> ❤️</p>
+        <p class="revealLater"><strong><span id="finalScore">0</span></strong> 💖</p>
         <div class="row revealLater" style="justify-content:center">
           <button id="againBtn" class="btn">Nomal!</button>
         </div>
@@ -388,7 +402,7 @@
     const FRAME_MS = 1000 / TARGET_FPS;
     const MAX_HEARTS = 100;            // cap objects on screen (↑ more hearts)
     const HEART_LIFETIME = 40000;     // ms before a heart despawns
-    const SPAWN_EVERY_MS = 400;       // spawn interval in ms (↓ = more frequent)
+    const SPAWN_EVERY_MS = 300;       // spawn interval in ms (↓ = more frequent)
     const DPR = 1;                    // force 1x to reduce fill rate
     const SQUASH_INTENSITY = 0.18;   // how bouncy the scaling feels (0.1–0.25 nice)
     const MAX_SQUASH = 0.28;         // hard cap for stretch amount
@@ -486,7 +500,7 @@
       const hs = imgOrFallback('heart');
       if (hs) { ctx.drawImage(hs, (x | 0) - 20, (y | 0) - 20, 40, 40); }
       else {
-        ctx.save(); ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', x | 0, y | 0); ctx.restore();
+        ctx.save(); ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('💖', x | 0, y | 0); ctx.restore();
       }
     }
 
