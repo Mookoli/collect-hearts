@@ -335,6 +335,33 @@
       font-size: 16px;
       box-shadow: 0 8px 20px #ff4d9133;
     }
+
+    .bottomBar {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .bottomBar .badge {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* slightly larger touch targets on small screens */
+    @media (max-width: 640px) {
+      #bottomChars .charBtn {
+        width: 56px;
+        height: 56px;
+      }
+    }
   </style>
 </head>
 
@@ -345,16 +372,18 @@
     <div class="hud">
       <div class="badge" id="scoreBadge"><strong id="score">0</strong> 💖</div>
       <div class="badge"><strong id="timer">30</strong>s</div>
+    </div>
+
+    <div id="bottomBar" class="bottomBar">
       <div class="badge" style="gap:10px">
-        <!-- Clickable heads in main HUD -->
-        <div class="charGroup" id="hudChars" aria-label="Choose character">
-          <button class="charBtn selected" data-char="bride" title="Choose character">
+        <div class="charGroup" id="bottomChars" aria-label="Choose character">
+          <button class="charBtn selected" data-char="bride">
             <img src="bride.png" alt="" />
           </button>
-          <button class="charBtn" data-char="groom" title="Choose character">
+          <button class="charBtn" data-char="groom">
             <img src="groom.png" alt="" />
           </button>
-          <button class="charBtn" data-char="kid" title="Choose character">
+          <button class="charBtn" data-char="kid">
             <img src="kid.png" alt="" />
           </button>
         </div>
@@ -422,6 +451,9 @@
     window.addEventListener('resize', resize);
     resize();
 
+    const bottomChars = document.getElementById('bottomChars');
+
+
     // ---------- UI refs ----------
     const scoreEl = document.getElementById('score');
     const timerEl = document.getElementById('timer');
@@ -457,7 +489,7 @@
     function setCharacter(key) {
       currentCharKey = key;
       // Update selected state in both pickers
-      for (const group of [startChars, hudChars]) {
+      for (const group of [startChars, bottomChars]) {
         if (!group) continue;
         group.querySelectorAll('.charBtn').forEach(btn => {
           btn.classList.toggle('selected', btn.dataset.char === key);
@@ -493,7 +525,7 @@
     }
 
     wirePicker(startChars);
-    wirePicker(hudChars);
+    if (bottomChars) wirePicker(bottomChars);
 
     // ---------- Draw helpers ----------
     function drawHeart(x, y) {
