@@ -121,11 +121,13 @@
       margin-top: 10px
     }
 
-    /* Character picker */
     .charGroup {
       display: flex;
-      gap: 8px;
-      align-items: center
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      /* center the heads */
+      width: 100%;
     }
 
     .charBtn {
@@ -257,25 +259,58 @@
       transform-origin: 50% 85%;
     }
 
-/* exaggerated triple bounce with spin */
-.endChar { transform-origin: 50% 85%; }
+    /* exaggerated triple bounce with spin */
+    .endChar {
+      transform-origin: 50% 85%;
+    }
 
-@keyframes tripleBounce {
-  0%   { transform: scale(0.7, 1.3); }   /* crouch */
-  10%  { transform: scale(1.3, 0.8); }   /* first pop */
-  25%  { transform: scale(0.85, 1.15); } /* rebound */
-  40%  { transform: scale(1.2, 0.85); }  /* second pop */
-  55%  { transform: scale(0.9, 1.1); }   /* rebound */
-  70%  { transform: scale(1.1, 0.9); }   /* third pop */
-  85%  { transform: scale(0.96, 1.04); } /* settle */
-  100% { transform: scale(1, 1); }       /* rest */
-}
+    @keyframes tripleBounce {
+      0% {
+        transform: scale(0.7, 1.3);
+      }
 
-.end.showDetails .endChar {
-  animation: tripleBounce 1.2s cubic-bezier(.25, .8, .25, 1);
-  opacity:1;
-}
+      /* crouch */
+      10% {
+        transform: scale(1.3, 0.8);
+      }
 
+      /* first pop */
+      25% {
+        transform: scale(0.85, 1.15);
+      }
+
+      /* rebound */
+      40% {
+        transform: scale(1.2, 0.85);
+      }
+
+      /* second pop */
+      55% {
+        transform: scale(0.9, 1.1);
+      }
+
+      /* rebound */
+      70% {
+        transform: scale(1.1, 0.9);
+      }
+
+      /* third pop */
+      85% {
+        transform: scale(0.96, 1.04);
+      }
+
+      /* settle */
+      100% {
+        transform: scale(1, 1);
+      }
+
+      /* rest */
+    }
+
+    .end.showDetails .endChar {
+      animation: tripleBounce 1.2s cubic-bezier(.25, .8, .25, 1);
+      opacity: 1;
+    }
   </style>
 </head>
 
