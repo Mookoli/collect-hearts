@@ -484,7 +484,7 @@
     const hearts = []; // {x,y,born}
     const player = { x: 200, y: 200, tx: 200, ty: 200, speed: 0.35, vx: 0, vy: 0 };
     let score = 0;
-    let timeLeft = 5; // seconds
+    let timeLeft = 30; // seconds
     let running = false;
 
     function setTarget(clientX, clientY) {
@@ -507,7 +507,7 @@
 
     function reset() {
       score = 0; scoreEl.textContent = '0';
-      timeLeft = 5; timerEl.textContent = '5';
+      timeLeft = 30; timerEl.textContent = '30';
       hearts.length = 0; lastSpawn = 0;
 
       const rect = canvas.getBoundingClientRect();
