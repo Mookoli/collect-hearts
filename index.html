@@ -337,31 +337,43 @@
     }
 
     .bottomBar {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      display: flex;
-      justify-content: center;
-      pointer-events: none;
-    }
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
 
-    .bottomBar .badge {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+.bottomBar .badge {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding: 8px 14px;
+}
 
-    /* slightly larger touch targets on small screens */
-    @media (max-width: 640px) {
-      #bottomChars .charBtn {
-        width: 56px;
-        height: 56px;
-      }
-    }
+/* Keep character heads compact (same as before) */
+#bottomChars .charBtn {
+  width: 40px;
+  height: 40px;
+}
+
+/* On small screens, keep layout horizontal with button to the right */
+@media (max-width: 640px) {
+  .bottomBar .badge {
+    flex-wrap: nowrap;
+  }
+  #bottomChars .charBtn {
+    width: 44px;
+    height: 44px;
+  }
+  #restartBtn {
+    margin-left: 8px; /* small spacing to the right */
+  }
+}
   </style>
 </head>
 
